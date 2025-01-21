@@ -2,7 +2,7 @@ import ApiService from '../apis/ApiService';
 import { ApiList } from '../apis/ApiList';
 import { Constants } from '../constants/Constants';
 
-import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { globalStyles } from '../styles/global';
 import { Button } from 'react-native-paper';
@@ -13,12 +13,12 @@ type HomeScreenProps = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 const CategoryItem = ({ item }: any) => {
     return (
-        <View style={[styles.flexCol]}>
+        <TouchableOpacity style={[styles.flexCol]}>
             <View style={[styles.flexCard]}>
                 <Image source={{ uri: item.image }} style={styles.image} />
                 <Text numberOfLines={1} style={[globalStyles.text, styles.text]}>{item.name}</Text>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 };
 
@@ -36,7 +36,7 @@ const Home = ({ navigation }: { navigation: HomeScreenProps }) => {
     }, []);
 
     return (
-        <View>
+        <View style={[styles.container]}>
             <Text style={[globalStyles.textBold, styles.headingText]}>Select a category to start a job</Text>
             <FlatList
                 key={3}
@@ -57,6 +57,9 @@ const Home = ({ navigation }: { navigation: HomeScreenProps }) => {
 export default Home;
 
 const styles = StyleSheet.create({
+    container: {
+        padding: 10,
+    },
     flexCol: {
         width: '33.33%',
         alignItems: 'center',
@@ -73,6 +76,7 @@ const styles = StyleSheet.create({
     headingText: {
         margin: 5,
         fontSize: 16,
+        fontWeight: 'bold',
     },
     image: {
         width: 50,
@@ -84,6 +88,7 @@ const styles = StyleSheet.create({
         fontSize: 12,
     },
     seeAllButton: {
+        marginVertical: 10,
         padding: 5,
     },
     button: {

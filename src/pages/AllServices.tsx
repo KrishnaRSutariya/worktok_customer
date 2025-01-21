@@ -2,53 +2,57 @@ import ApiService from '../apis/ApiService';
 import { ApiList } from '../apis/ApiList';
 import { Constants } from '../constants/Constants';
 
-import { useNavigation } from '@react-navigation/native';
-
-import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { globalStyles } from '../styles/global';
-import { Button } from 'react-native-paper';
+import { Searchbar } from 'react-native-paper';
 
 const CategoryItem = ({ item }: any) => {
     return (
-        <View style={[styles.flexCol]}>
+        <TouchableOpacity style={[styles.flexCol]}>
             <View style={[styles.flexCard]}>
                 <Image source={{ uri: item.image }} style={styles.image} />
                 <Text numberOfLines={1} style={[globalStyles.text, styles.text]}>{item.name}</Text>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 };
 
 const AllServices = () => {
-    const navigation = useNavigation();
     const [category, setCategory] = React.useState([]);
+    const [search, setSearch] = React.useState<string>('');
 
     React.useEffect(() => {
         const fetchCategory = async () => {
-            const response = await ApiService(ApiList.GET_HOME, Constants.GET);
+            const response = await ApiService(`${ApiList.GET_ALL_CATEGORY}?search=${search}`, Constants.GET);
             if (response?.ack) {
                 setCategory(response?.categories);
             }
         };
         fetchCategory();
-    }, []);
+    }, [search]);
 
     return (
-        <View>
-            <Text style={[globalStyles.textBold, styles.headingText]}>Select a category to start a job</Text>
+        <View style={[styles.container]}>
+            <View style={[styles.searchBarContainer]}>
+                <Searchbar
+                    placeholder="Search service..."
+                    onChangeText={setSearch}
+                    value={search}
+                    style={styles.searchBar}
+                    inputStyle={styles.searchBarInput}
+                    cursorColor={'#fff'}
+                    iconColor={'#fff'}
+                    selectionColor={'#fff'}
+                    placeholderTextColor={'#fff'}
+                />
+            </View>
+            <Text style={[globalStyles.textBold, styles.headingText]}>Home maintenance</Text>
             <FlatList
-                key={3}
-                numColumns={3}
                 keyExtractor={(item: any) => `${item?.id}`}
                 data={category}
                 renderItem={({ item }) => <CategoryItem item={item} />}
             />
-            <View style={[styles.seeAllButton]}>
-                <Button mode="contained" style={[styles.button]} onPress={() => navigation.navigate('AllServices')} >
-                    <Text style={[globalStyles.textBold, styles.button]}>See all categories</Text>
-                </Button>
-            </View>
         </View>
     );
 };
@@ -56,31 +60,54 @@ const AllServices = () => {
 export default AllServices;
 
 const styles = StyleSheet.create({
+    container: {
+        marginBottom: 195,
+    },
+    searchBarContainer: {
+        padding: 10,
+        backgroundColor: '#4caf50',
+    },
+    searchBar: {
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: 'rgba(255, 255, 255, 0.25)',
+    },
+    searchBarInput: {
+        fontSize: 20,
+        color: '#fff',
+    },
     flexCol: {
-        width: '33.33%',
+        width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
     },
     flexCard: {
         width: '90%',
-        margin: 5,
+        margin: 2,
         padding: 10,
         borderRadius: 5,
         backgroundColor: '#fff',
+        flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'flex-start',
     },
     headingText: {
         margin: 5,
+        marginHorizontal: 20,
         fontSize: 16,
+        fontWeight: 'bold',
     },
     image: {
         width: 50,
         height: 50,
-        borderRadius: 50,
+        borderRadius: 10,
+        marginRight: 20,
     },
     text: {
+        width: '80%',
         marginVertical: 5,
-        fontSize: 12,
+        fontSize: 20,
     },
     seeAllButton: {
         padding: 5,

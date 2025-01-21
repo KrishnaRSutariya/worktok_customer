@@ -1,6 +1,9 @@
 export const ApiList = {
     // Home Page
-    GET_HOME: 'home/customer?latitude=33.333332&longitude=44.468815',
+    GET_HOME: 'home/customer',
+
+    // Category
+    GET_ALL_CATEGORY: 'category/get-all',
 
 };
 

@@ -77,6 +77,7 @@ const BottomNavigator = () => {
             <Tab.Screen name="More"
                 options={{
                     tabBarIcon: ({ focused }) => getIcons('table-cells-large', focused),
+                    headerShown: false,
                 }}
                 component={More}
             />
