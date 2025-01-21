@@ -13,8 +13,10 @@ import AllServices from './pages/AllServices';
 import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import HomeHeader from './components/home/HomeHeader';
 import PageHeader from './components/home/PageHeader';
+import Login from './pages/Login';
 
 export type RootStackParamList = {
+    Login: undefined;
     Home: undefined;
     Message: undefined;
     MyJobs: undefined;
@@ -89,6 +91,11 @@ export const Layout = () => {
     return (
         <NavigationContainer>
             <Stack.Navigator screenOptions={{ header: PageHeader }}>
+                <Stack.Screen
+                    name="Login"
+                    component={Login}
+                    options={{ headerShown: false }}
+                />
                 <Stack.Screen
                     name="HomeScreen"
                     component={BottomNavigator}
