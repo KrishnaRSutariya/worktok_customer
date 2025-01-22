@@ -54,7 +54,7 @@ const Notification = ({ route: { params: { route } }, navigation }: { route: { p
                 height={height / 1.5}
                 useNativeDriver={false}
                 draggable
-                customStyles={{ wrapper: { backgroundColor: 'rgba(0,0,0,0.5)' } }}
+                customStyles={{ wrapper: { backgroundColor: 'rgba(0,0,0,0.5)' }, container: { borderTopLeftRadius: 25, borderTopRightRadius: 25 } }}
                 customModalProps={{
                     animationType: 'fade',
                     statusBarTranslucent: true,
