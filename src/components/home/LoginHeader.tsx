@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
     },
     icon: {
         paddingBottom: 10,
+        width: 50,
     },
     mainTitle: {
         color: '#fff',

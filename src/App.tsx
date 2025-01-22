@@ -8,11 +8,14 @@
 import React from 'react';
 import { PaperProvider } from 'react-native-paper';
 import { Layout } from './Layout';
+import { ToastContainer } from './components/common/Toaster';
 
 function App(): React.JSX.Element {
   return (
     <PaperProvider>
-      <Layout />
+      <ToastContainer>
+        <Layout />
+      </ToastContainer>
     </PaperProvider>
   );
 }

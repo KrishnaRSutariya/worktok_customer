@@ -16,12 +16,14 @@ import PageHeader from './components/home/PageHeader';
 import Login from './pages/Login';
 import Registration from './pages/Registration';
 import Landing from './components/landing/Landing';
+import Location from './pages/pemissions/Location';
 
 export type RootStackParamList = {
     Landing: undefined;
     Login: undefined;
     Registration: undefined;
     Home: undefined;
+    LocationPermission: undefined;
     Message: undefined;
     MyJobs: undefined;
     More: undefined;
@@ -94,7 +96,7 @@ const BottomNavigator = () => {
 export const Layout = () => {
     return (
         <NavigationContainer>
-            <Stack.Navigator screenOptions={{ header: PageHeader }}>
+            <Stack.Navigator screenOptions={{ header: PageHeader }} initialRouteName="LocationPermission">
                 <Stack.Screen
                     name="Landing"
                     component={Landing}
@@ -108,6 +110,11 @@ export const Layout = () => {
                 <Stack.Screen
                     name="Registration"
                     component={Registration}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="LocationPermission"
+                    component={Location}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
