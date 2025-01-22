@@ -16,14 +16,18 @@ import PageHeader from './components/home/PageHeader';
 import Login from './pages/Login';
 import Registration from './pages/Registration';
 import Landing from './components/landing/Landing';
-import Location from './pages/pemissions/Location';
+import Notification from './pages/permissions/Notification';
+import Location from './pages/permissions/Location';
+import Microphone from './pages/permissions/Microphone';
 
 export type RootStackParamList = {
     Landing: undefined;
     Login: undefined;
     Registration: undefined;
     Home: undefined;
-    LocationPermission: undefined;
+    NotificationPermission: { route: 'Login' | 'Registration' };
+    LocationPermission: { route: 'Login' | 'Registration' };
+    MicrophonePermission: { route: 'Login' | 'Registration' };
     Message: undefined;
     MyJobs: undefined;
     More: undefined;
@@ -96,7 +100,7 @@ const BottomNavigator = () => {
 export const Layout = () => {
     return (
         <NavigationContainer>
-            <Stack.Navigator screenOptions={{ header: PageHeader }} initialRouteName="LocationPermission">
+            <Stack.Navigator screenOptions={{ header: PageHeader }}>
                 <Stack.Screen
                     name="Landing"
                     component={Landing}
@@ -113,8 +117,18 @@ export const Layout = () => {
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
+                    name="NotificationPermission"
+                    component={Notification}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
                     name="LocationPermission"
                     component={Location}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="MicrophonePermission"
+                    component={Microphone}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
