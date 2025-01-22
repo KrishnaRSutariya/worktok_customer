@@ -1,26 +1,26 @@
 import { Dimensions, ScrollView, StyleSheet, View } from 'react-native';
 import React from 'react';
 import LoginHeader from '../components/home/LoginHeader';
-import LoginMain from '../components/login_registration/LoginMain';
+import RegistrationMain from '../components/login_registration/RegistrationMain';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../Layout';
 
 const { height } = Dimensions.get('window');
 
-type LoginProps = NativeStackNavigationProp<RootStackParamList, 'Login'>;
+type RegistrationProps = NativeStackNavigationProp<RootStackParamList, 'Registration'>;
 
-const Login = ({ navigation }: { navigation: LoginProps }) => {
+const Registration = ({ navigation }: { navigation: RegistrationProps }) => {
     return (
         <View>
-            <LoginHeader title={'Login account'} subTitle={'Login to your account and get your desired service.'} navigation={navigation} />
+            <LoginHeader title={'Create an account'} subTitle={'Create an account and start your amazing trip'} navigation={navigation} />
             <ScrollView style={styles.container}>
-                <LoginMain navigation={navigation} />
+                <RegistrationMain navigation={navigation} />
             </ScrollView>
         </View>
     );
 };
 
-export default Login;
+export default Registration;
 
 const styles = StyleSheet.create({
     container: {

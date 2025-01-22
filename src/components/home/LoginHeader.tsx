@@ -2,13 +2,17 @@ import { ImageBackground, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 
 import FontAwesome from 'react-native-vector-icons/FontAwesome6';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../Layout';
 
+type LoginHeaderProps = NativeStackNavigationProp<RootStackParamList, 'Login' | 'Registration'>;
 
-const LoginHeader = ({ title, subTitle }: { title: string; subTitle: string }) => {
+const LoginHeader = ({ title, subTitle, navigation }: { title: string; subTitle: string, navigation: LoginHeaderProps }) => {
     return (
         <View style={styles.roundedContainer}>
             <ImageBackground source={require('../../assets/HomeHeaderBackground.png')} style={styles.container}>
                 <View style={styles.topBar}>
+                    <FontAwesome name="angle-left" size={30} solid color="white" style={styles.icon} onPress={() => navigation.goBack()} />
                     <FontAwesome name="circle-user" size={50} solid color="white" style={styles.icon} />
                     <Text style={styles.mainTitle}>{title}</Text>
                     <Text style={styles.subTitle}>{subTitle}</Text>
@@ -22,16 +26,17 @@ export default LoginHeader;
 
 const styles = StyleSheet.create({
     roundedContainer: {
-        borderBottomRightRadius: 50,
-        overflow: 'hidden',
+        backgroundColor: '#fff',
     },
     container: {
-        height: 200,
+        height: 220,
         padding: 15,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-end',
         objectFit: 'contain',
+        borderBottomRightRadius: 50,
+        overflow: 'hidden',
     },
     topBar: {
         gap: 10,

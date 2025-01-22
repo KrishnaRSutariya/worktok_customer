@@ -14,9 +14,13 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import HomeHeader from './components/home/HomeHeader';
 import PageHeader from './components/home/PageHeader';
 import Login from './pages/Login';
+import Registration from './pages/Registration';
+import Landing from './components/landing/Landing';
 
 export type RootStackParamList = {
+    Landing: undefined;
     Login: undefined;
+    Registration: undefined;
     Home: undefined;
     Message: undefined;
     MyJobs: undefined;
@@ -92,8 +96,18 @@ export const Layout = () => {
         <NavigationContainer>
             <Stack.Navigator screenOptions={{ header: PageHeader }}>
                 <Stack.Screen
+                    name="Landing"
+                    component={Landing}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
                     name="Login"
                     component={Login}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="Registration"
+                    component={Registration}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen

@@ -1,29 +1,41 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { TextInput } from 'react-native-paper';
+import { TextInput, Checkbox } from 'react-native-paper';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import CountryPicker, { CountryCode } from 'react-native-country-picker-modal';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../Layout';
 
 interface FormValues {
+  full_name: string;
   phone: string;
   password: string;
+  confirm_password: string;
 }
 
 const schema = yup.object().shape({
+  full_name: yup.string().required('Full name is required'),
   phone: yup
     .string()
     .matches(/^\d+$/, 'Phone number must contain only digits')
     .required('Phone number is required'),
   password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
+  confirm_password: yup
+    .string()
+    .oneOf([yup.ref('password')], 'Passwords must match')
+    .required('Confirm password is required'),
 });
 
-const LoginMain: React.FC = () => {
+type RegistrationProps = NativeStackNavigationProp<RootStackParamList, 'Registration'>;
+
+const RegistrationMain = ({ navigation }: { navigation: RegistrationProps }) => {
   const [countryCode, setCountryCode] = React.useState<CountryCode>('IN');
   const [callingCode, setCallingCode] = React.useState<string>('91');
   const [countryPickerVisible, setCountryPickerVisible] = React.useState<boolean>(false);
   const [viewPassword, setViewPassword] = React.useState<boolean>(false);
+  const [rememberMe, setRememberMe] = React.useState<boolean>(false);
 
   const { control, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: yupResolver(schema),
@@ -55,6 +67,28 @@ const LoginMain: React.FC = () => {
           </View>
         )
       }
+      <View style={styles.subContainer}>
+        <Text style={styles.text}>
+          Full Name <Text style={styles.required}>*</Text>
+        </Text>
+        <Controller
+          control={control}
+          name="full_name"
+          render={({ field: { onChange, value } }: any) => (
+            <TextInput
+              placeholder="Enter your full name"
+              value={value}
+              onChangeText={onChange}
+              selectionColor={'#000'}
+              textColor={'#000'}
+              activeUnderlineColor={'transparent'}
+              style={[styles.textInput, errors.full_name && styles.errorBorder]}
+            />
+          )}
+        />
+        {errors.full_name && <Text style={styles.errorText}>{errors.full_name.message}</Text>}
+      </View>
+
       <View style={styles.subContainer}>
         <Text style={styles.text}>
           Phone Number <Text style={styles.required}>*</Text>
@@ -109,20 +143,57 @@ const LoginMain: React.FC = () => {
         {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
       </View>
 
+      <View style={styles.subContainer}>
+        <Text style={styles.text}>
+          Confirm Password <Text style={styles.required}>*</Text>
+        </Text>
+        <Controller
+          control={control}
+          name="confirm_password"
+          render={({ field: { onChange, value } }: any) => (
+            <TextInput
+              placeholder="Confirm your password"
+              value={value}
+              onChangeText={onChange}
+              style={[styles.textInput, errors.confirm_password && styles.errorBorder]}
+              secureTextEntry={!viewPassword}
+              selectionColor={'#000'}
+              textColor={'#000'}
+              activeUnderlineColor={'transparent'}
+              right={
+                value && <TextInput.Icon icon={viewPassword ? 'eye-off' : 'eye'} color={'#8b92a2'} onPress={() => setViewPassword(!viewPassword)} />
+              }
+            />
+          )}
+        />
+        {errors.confirm_password && <Text style={styles.errorText}>{errors.confirm_password.message}</Text>}
+      </View>
+
+      <View style={styles.optionsContainer}>
+        <View style={styles.rememberMe}>
+          <Checkbox
+            status={rememberMe ? 'checked' : 'unchecked'}
+            color={'#4caf50'}
+            onPress={() => setRememberMe(!rememberMe)}
+          />
+          <Text onPress={() => setRememberMe(!rememberMe)} style={styles.rememberMeText}>By selecting “Create Account” you are confirming that you have read and agreed to WorkTok’s <Text style={styles.registerLink}>Terms of Use</Text> and <Text style={styles.registerLink}>Privacy Policy</Text>.</Text>
+        </View>
+      </View>
+
       <TouchableOpacity onPress={handleSubmit(onSubmit)} style={styles.submitButton}>
-        <Text style={styles.submitText}>Login</Text>
+        <Text style={styles.submitText}>Create account</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.registerContainer}>
+      <View style={styles.registerContainer}>
         <Text style={styles.registerText}>
-          Not registered yet? <Text style={styles.registerLink}>Register now</Text>
+          Already have an account? <Text style={styles.registerLink} onPress={() => navigation.navigate('Login')}>Log in</Text>
         </Text>
-      </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
-export default LoginMain;
+export default RegistrationMain;
 
 const styles = StyleSheet.create({
   container: {
@@ -130,7 +201,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   subContainer: {
-    marginBottom: 20,
+    marginBottom: 15,
   },
   text: {
     marginBottom: 5,
@@ -195,5 +266,24 @@ const styles = StyleSheet.create({
   },
   errorBorder: {
     borderColor: 'red',
+  },
+  optionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  forgotPassword: {
+    color: '#28a745',
+    fontWeight: 'bold',
+  },
+  rememberMe: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  rememberMeText: {
+    color: '#555',
+    width: '90%',
+    textAlign: 'justify',
   },
 });
