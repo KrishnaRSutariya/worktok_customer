@@ -30,7 +30,7 @@ const schema = yup.object().shape({
 
 type RegistrationProps = NativeStackNavigationProp<RootStackParamList, 'Registration'>;
 
-const RegistrationMain = ({ navigation }: { navigation: RegistrationProps }) => {
+const RegistrationMain = ({ navigation, setFormData }: { navigation: RegistrationProps, setFormData: any }) => {
   const [countryCode, setCountryCode] = React.useState<CountryCode>('IN');
   const [callingCode, setCallingCode] = React.useState<string>('91');
   const [countryPickerVisible, setCountryPickerVisible] = React.useState<boolean>(false);
@@ -39,11 +39,16 @@ const RegistrationMain = ({ navigation }: { navigation: RegistrationProps }) => 
 
   const { control, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: yupResolver(schema),
+    defaultValues: {
+      full_name: 'Test User',
+      phone: '1234567890',
+      password: 'Test@123',
+      confirm_password: 'Test@123',
+    },
   });
 
   const onSubmit = (data: FormValues) => {
-    const fullPhoneNumber = `+${callingCode}${data.phone}`;
-    console.log('Form Submitted', { ...data, fullPhoneNumber });
+    setFormData({ ...data, countryCode: `+${callingCode}` });
   };
 
   return (
