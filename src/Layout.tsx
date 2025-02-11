@@ -19,11 +19,13 @@ import Landing from './components/landing/Landing';
 import Notification from './pages/permissions/Notification';
 import Location from './pages/permissions/Location';
 import Microphone from './pages/permissions/Microphone';
+import AccountCreation from './pages/AccountCreation';
 
 export type RootStackParamList = {
     Landing: undefined;
     Login: undefined;
     Registration: undefined;
+    AccountCreation: undefined;
     Home: undefined;
     NotificationPermission: { route: 'Login' | 'Registration' };
     LocationPermission: { route: 'Login' | 'Registration' };
@@ -114,6 +116,11 @@ export const Layout = () => {
                 <Stack.Screen
                     name="Registration"
                     component={Registration}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="AccountCreation"
+                    component={AccountCreation}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
