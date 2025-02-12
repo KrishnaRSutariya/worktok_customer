@@ -1,16 +1,15 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { TextInput, Checkbox } from 'react-native-paper';
+import { StyleSheet, Text, View, TouchableOpacity, Dimensions } from 'react-native';
+import { TextInput } from 'react-native-paper';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import CountryPicker, { CountryCode } from 'react-native-country-picker-modal';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../Layout';
+
+const { height } = Dimensions.get('window');
 
 interface FormValues {
   phone: string;
-  password: string;
 }
 
 const schema = yup.object().shape({
@@ -18,25 +17,22 @@ const schema = yup.object().shape({
     .string()
     .matches(/^\d+$/, 'Phone number must contain only digits')
     .required('Phone number is required'),
-  password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
 });
 
-type LoginProps = NativeStackNavigationProp<RootStackParamList, 'Login'>;
-
-const LoginMain = ({ navigation }: { navigation: LoginProps }) => {
+const ForgotPasswordMain = ({ setFormData }: { setFormData: any }) => {
   const [countryCode, setCountryCode] = React.useState<CountryCode>('IN');
   const [callingCode, setCallingCode] = React.useState<string>('91');
   const [countryPickerVisible, setCountryPickerVisible] = React.useState<boolean>(false);
-  const [viewPassword, setViewPassword] = React.useState<boolean>(false);
-  const [rememberMe, setRememberMe] = React.useState<boolean>(false);
 
   const { control, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: yupResolver(schema),
+    defaultValues: {
+      phone: '1234567890',
+    },
   });
 
   const onSubmit = (data: FormValues) => {
-    const fullPhoneNumber = `+${callingCode}${data.phone}`;
-    console.log('Form Submitted', { ...data, fullPhoneNumber });
+    setFormData({ ...data, countryCode: `+${callingCode}` });
   };
 
   return (
@@ -88,65 +84,27 @@ const LoginMain = ({ navigation }: { navigation: LoginProps }) => {
         {errors.phone && <Text style={styles.errorText}>{errors.phone.message}</Text>}
       </View>
 
-      <View style={styles.subContainer}>
-        <Text style={styles.text}>
-          Password <Text style={styles.required}>*</Text>
-        </Text>
-        <Controller
-          control={control}
-          name="password"
-          render={({ field: { onChange, value } }: any) => (
-            <TextInput
-              placeholder="Type your password"
-              value={value}
-              onChangeText={onChange}
-              style={[styles.textInput, errors.password && styles.errorBorder]}
-              secureTextEntry={!viewPassword}
-              selectionColor={'#000'}
-              textColor={'#000'}
-              activeUnderlineColor={'transparent'}
-              right={
-                value && <TextInput.Icon icon={viewPassword ? 'eye-off' : 'eye'} color={'#8b92a2'} onPress={() => setViewPassword(!viewPassword)} />
-              }
-            />
-          )}
-        />
-        {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
-      </View>
-
-      <View style={styles.optionsContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-          <Text style={styles.forgotPassword}>Forgot password?</Text>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={handleSubmit(onSubmit)} style={styles.submitButton}>
+          <Text style={styles.submitText}>Send code</Text>
         </TouchableOpacity>
-        <View style={styles.rememberMe}>
-          <Checkbox
-            status={rememberMe ? 'checked' : 'unchecked'}
-            color={'#4caf50'}
-            onPress={() => setRememberMe(!rememberMe)}
-          />
-          <Text onPress={() => setRememberMe(!rememberMe)}>Remember me</Text>
-        </View>
+        <TouchableOpacity onPress={() => { }} style={styles.cancelButton}>
+          <Text style={styles.cancelText}>Cancel</Text>
+        </TouchableOpacity>
       </View>
 
-      <TouchableOpacity onPress={handleSubmit(onSubmit)} style={styles.submitButton}>
-        <Text style={styles.submitText}>Login</Text>
-      </TouchableOpacity>
-
-      <View style={styles.registerContainer}>
-        <Text style={styles.registerText}>
-          Not registered yet? <Text style={styles.registerLink} onPress={() => navigation.navigate('Registration')}>Register now</Text>
-        </Text>
-      </View>
     </View>
   );
 };
 
-export default LoginMain;
+export default ForgotPasswordMain;
 
 const styles = StyleSheet.create({
   container: {
+    height: height / 2,
     padding: 20,
     flex: 1,
+    justifyContent: 'space-between',
   },
   subContainer: {
     marginBottom: 15,
@@ -185,27 +143,32 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     marginRight: 15,
   },
+  buttonContainer: {
+    gap: 10,
+  },
   submitButton: {
     backgroundColor: '#4CAF50',
     paddingVertical: 15,
     borderRadius: 5,
     alignItems: 'center',
   },
+  cancelButton: {
+    backgroundColor: '#f2f4f7',
+    paddingVertical: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+    borderColor: '#f0f2f5',
+    borderWidth: 2,
+  },
   submitText: {
     color: 'white',
     fontWeight: 'bold',
     fontSize: 16,
   },
-  registerContainer: {
-    marginTop: 20,
-    alignItems: 'center',
-  },
-  registerText: {
-    color: '#555',
-  },
-  registerLink: {
-    color: '#4CAF50',
+  cancelText: {
+    color: '#1d2939',
     fontWeight: 'bold',
+    fontSize: 16,
   },
   errorText: {
     color: 'red',
@@ -214,19 +177,5 @@ const styles = StyleSheet.create({
   },
   errorBorder: {
     borderColor: 'red',
-  },
-  optionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  forgotPassword: {
-    color: '#28a745',
-    fontWeight: 'bold',
-  },
-  rememberMe: {
-    flexDirection: 'row',
-    alignItems: 'center',
   },
 });

@@ -20,12 +20,16 @@ import Notification from './pages/permissions/Notification';
 import Location from './pages/permissions/Location';
 import Microphone from './pages/permissions/Microphone';
 import AccountCreation from './pages/AccountCreation';
+import ForgotPassword from './pages/ForgotPassword';
+import CreateNewPassword from './pages/CreateNewPassword';
 
 export type RootStackParamList = {
     Landing: undefined;
     Login: undefined;
     Registration: undefined;
     AccountCreation: undefined;
+    ForgotPassword: undefined;
+    CreateNewPassword: undefined;
     Home: undefined;
     NotificationPermission: { route: 'Login' | 'Registration' };
     LocationPermission: { route: 'Login' | 'Registration' };
@@ -136,6 +140,16 @@ export const Layout = () => {
                 <Stack.Screen
                     name="MicrophonePermission"
                     component={Microphone}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="ForgotPassword"
+                    component={ForgotPassword}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="CreateNewPassword"
+                    component={CreateNewPassword}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
