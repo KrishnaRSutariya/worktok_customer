@@ -6,4 +6,9 @@ export const Constants = {
     DELETE: 'DELETE',
     PATCH: 'PATCH',
 
+    ROLE: {
+        CUSTOMER: 'user',
+        PROVIDER: 'provider',
+    },
+
 };

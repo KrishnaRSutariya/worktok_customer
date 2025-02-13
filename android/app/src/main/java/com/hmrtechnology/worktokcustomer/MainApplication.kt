@@ -1,4 +1,4 @@
-package com.worktok_customer
+package com.hmrtechnology.worktokcustomer
 
 import android.app.Application
 import com.facebook.react.PackageList

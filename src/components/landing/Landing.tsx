@@ -15,12 +15,21 @@ const Landing = ({ navigation }: { navigation: LandingProps }) => {
     const { getStoredValue: getNotification } = useAsyncStorage('notification');
     const { getStoredValue: getLocation } = useAsyncStorage('location');
     const { getStoredValue: getMicrophone } = useAsyncStorage('microphone');
+    const { getStoredValue: getUserToken } = useAsyncStorage('userToken');
 
     const [loading, setLoading] = React.useState(true);
 
     React.useEffect(() => {
-        setTimeout(() => setLoading(false), 2000);
-    }, []);
+        const getStoredValue = async () => {
+            const token = await getUserToken();
+
+            if (token) {
+                navigation.navigate('HomeScreen');
+            }
+            setLoading(false);
+        };
+        getStoredValue();
+    }, [getUserToken, navigation]);
 
     const navigationPage = async (route: 'Login' | 'Registration') => {
         if (!(await getNotification().then(res => res?.isPermission))) {

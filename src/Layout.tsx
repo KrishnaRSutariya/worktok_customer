@@ -29,7 +29,7 @@ export type RootStackParamList = {
     Registration: undefined;
     AccountCreation: undefined;
     ForgotPassword: undefined;
-    CreateNewPassword: undefined;
+    CreateNewPassword: { user_id: string, reset_token: string };
     Home: undefined;
     NotificationPermission: { route: 'Login' | 'Registration' };
     LocationPermission: { route: 'Login' | 'Registration' };

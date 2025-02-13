@@ -1,0 +1,91 @@
+{
+  "project_info": {
+    "project_number": "869884011918",
+    "firebase_url": "https://worktok-365da-default-rtdb.firebaseio.com",
+    "project_id": "worktok-365da",
+    "storage_bucket": "worktok-365da.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:869884011918:android:36da39b47f6676b01c70df",
+        "android_client_info": {
+          "package_name": "com.hmrtechnology.worktokcustomer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "869884011918-dshojkr9v0i48mv9nkfe3ogrl3qhmd01.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEOA2rjFDrCzsiR4jMYPJeb_J2Y5wUnYw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "869884011918-dshojkr9v0i48mv9nkfe3ogrl3qhmd01.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "869884011918-krq0j8m3msveppit56177ilbkipj3q9t.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.worktok.provider"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:869884011918:android:997a2e45af9d7f4c1c70df",
+        "android_client_info": {
+          "package_name": "org.worktok.provider"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "869884011918-musvc594iqt2h29q5hn849icdjhraqsf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.worktok.provider",
+            "certificate_hash": "da59b61faddd9dd9d602a8e14ab68cfd4e9a7337"
+          }
+        },
+        {
+          "client_id": "869884011918-dshojkr9v0i48mv9nkfe3ogrl3qhmd01.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEOA2rjFDrCzsiR4jMYPJeb_J2Y5wUnYw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "869884011918-dshojkr9v0i48mv9nkfe3ogrl3qhmd01.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "869884011918-krq0j8m3msveppit56177ilbkipj3q9t.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.worktok.provider"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

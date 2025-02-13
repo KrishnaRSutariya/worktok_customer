@@ -1,5 +1,6 @@
 import { Constants } from '../constants/Constants';
 import { Environments } from '../constants/Environments';
+import { useAsyncStorage } from '../hooks/useAsyncStorage';
 
 const ApiService = async (
     url: string,
@@ -8,7 +9,8 @@ const ApiService = async (
     formData = false,
     baseUrl = Environments.BACKEND_URL
 ) => {
-    const token = null;
+    const { getStoredValue: getUserToken } = useAsyncStorage('userToken');
+    const token = await getUserToken().then((res) => res?.accessToken ?? null).catch(() => null);
 
     const requestOptions: RequestInit = {
         method: type,
@@ -22,13 +24,14 @@ const ApiService = async (
         redirect: 'follow',
     };
 
+    console.log(`\n${baseUrl}/${url}: `, JSON.stringify(requestOptions), '\n\n');
+
     const response = await fetch(`${baseUrl}/${url}`, requestOptions);
+    const responseJson = await response.json();
 
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    console.log('\nOutput: ', JSON.stringify(responseJson), '\n\n');
 
-    return response.json();
+    return responseJson;
 };
 
 export default ApiService;

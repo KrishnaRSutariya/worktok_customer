@@ -40,10 +40,10 @@ const RegistrationMain = ({ navigation, setFormData }: { navigation: Registratio
   const { control, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: yupResolver(schema),
     defaultValues: {
-      full_name: 'Test User',
-      phone: '1234567890',
-      password: 'Test@123',
-      confirm_password: 'Test@123',
+      full_name: '',
+      phone: '',
+      password: '',
+      confirm_password: '',
     },
   });
 

@@ -1,5 +1,11 @@
 {
   "name": "Worktok Customer",
   "displayName": "worktok_customer",
-  "newArchEnabled": true
+  "newArchEnabled": true,
+  "android": {
+    "package": "com.hmrtechnology.worktokcustomer"
+  },
+  "ios": {
+    "bundleIdentifier": "com.hmrtechnology.worktokcustomer"
+  }
 }

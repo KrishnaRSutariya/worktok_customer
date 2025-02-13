@@ -26,8 +26,8 @@ const CreateNewPasswordMain = ({ setFormData }: { setFormData: any }) => {
   const { control, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: yupResolver(schema),
     defaultValues: {
-      password: 'Test@123',
-      confirm_password: 'Test@123',
+      password: '',
+      confirm_password: '',
     },
   });
 

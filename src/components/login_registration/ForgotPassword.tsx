@@ -5,6 +5,8 @@ import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import CountryPicker, { CountryCode } from 'react-native-country-picker-modal';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../Layout';
 
 const { height } = Dimensions.get('window');
 
@@ -19,7 +21,9 @@ const schema = yup.object().shape({
     .required('Phone number is required'),
 });
 
-const ForgotPasswordMain = ({ setFormData }: { setFormData: any }) => {
+type ForgotPasswordProps = NativeStackNavigationProp<RootStackParamList, 'ForgotPassword'>;
+
+const ForgotPasswordMain = ({ navigation, setFormData }: { navigation: ForgotPasswordProps, setFormData: any }) => {
   const [countryCode, setCountryCode] = React.useState<CountryCode>('IN');
   const [callingCode, setCallingCode] = React.useState<string>('91');
   const [countryPickerVisible, setCountryPickerVisible] = React.useState<boolean>(false);
@@ -27,7 +31,7 @@ const ForgotPasswordMain = ({ setFormData }: { setFormData: any }) => {
   const { control, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: yupResolver(schema),
     defaultValues: {
-      phone: '1234567890',
+      phone: '',
     },
   });
 
@@ -88,7 +92,7 @@ const ForgotPasswordMain = ({ setFormData }: { setFormData: any }) => {
         <TouchableOpacity onPress={handleSubmit(onSubmit)} style={styles.submitButton}>
           <Text style={styles.submitText}>Send code</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => { }} style={styles.cancelButton}>
+        <TouchableOpacity onPress={() => { navigation.goBack(); }} style={styles.cancelButton}>
           <Text style={styles.cancelText}>Cancel</Text>
         </TouchableOpacity>
       </View>

@@ -5,6 +5,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import { globalStyles } from '../../styles/global';
 import { RootStackParamList } from '../../Layout';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useAsyncStorage } from '../../hooks/useAsyncStorage';
 
 const navigationMenu = [
     [
@@ -67,7 +68,7 @@ const navigationMenu = [
         {
             title: 'Logout',
             icon: 'right-from-bracket',
-            navigation: 'Home',
+            onPress: 'handleLogout',
             iconStyle: { color: '#f04438', backgroundColor: '#FEF0EE' },
             rightArrowHide: true,
         },
@@ -77,9 +78,22 @@ const navigationMenu = [
 type MoreScreenProps = NativeStackNavigationProp<RootStackParamList, 'More'>;
 
 const SubMenu = ({ item, navigation }: { item: any; navigation: MoreScreenProps }) => {
+
+    const { removeValue: removeToken } = useAsyncStorage('userToken');
+    const { removeValue: removeUserDetails } = useAsyncStorage('userDetails');
+
+    const actions: Record<string, () => void> = {
+        handleLogout: async () => {
+            await removeToken();
+            await removeUserDetails();
+            navigation.navigate('Landing');
+        },
+    };
+
+
     return (
         <View style={styles.subBox}>
-            <TouchableOpacity style={styles.innerContainer} onPress={() => navigation.navigate(item.navigation as any)}>
+            <TouchableOpacity style={styles.innerContainer} onPress={() => item.navigation ? navigation.navigate(item.navigation as any) : item.onPress ? actions[item.onPress]() : null}>
                 <View>
                     <FontAwesome name={item.icon} size={14} solid color={'#4caf50'} style={[styles.icons, item.iconStyle]} />
                 </View>

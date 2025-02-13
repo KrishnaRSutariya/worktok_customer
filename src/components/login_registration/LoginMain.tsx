@@ -7,6 +7,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import CountryPicker, { CountryCode } from 'react-native-country-picker-modal';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../Layout';
+import ApiService from '../../apis/ApiService';
+import { Constants } from '../../constants/Constants';
+import { ApiList } from '../../apis/ApiList';
+import { useToast } from '../common/Toaster';
+import { useAsyncStorage } from '../../hooks/useAsyncStorage';
 
 interface FormValues {
   phone: string;
@@ -24,20 +29,62 @@ const schema = yup.object().shape({
 type LoginProps = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
 const LoginMain = ({ navigation }: { navigation: LoginProps }) => {
+  const [loginDetails, setLoginDetails] = React.useState<FormValues | {}>({});
   const [countryCode, setCountryCode] = React.useState<CountryCode>('IN');
   const [callingCode, setCallingCode] = React.useState<string>('91');
   const [countryPickerVisible, setCountryPickerVisible] = React.useState<boolean>(false);
   const [viewPassword, setViewPassword] = React.useState<boolean>(false);
   const [rememberMe, setRememberMe] = React.useState<boolean>(false);
+  const { saveValue: saveUserToken }: any = useAsyncStorage('userToken');
+  const { getStoredValue: getTempLogin, saveValue: saveTempLogin }: any = useAsyncStorage('tempLogin');
 
-  const { control, handleSubmit, formState: { errors } } = useForm<FormValues>({
+  const { showToast } = useToast();
+
+  const { control, handleSubmit, formState: { errors }, reset } = useForm<FormValues>({
     resolver: yupResolver(schema),
+    defaultValues: loginDetails,
   });
 
-  const onSubmit = (data: FormValues) => {
-    const fullPhoneNumber = `+${callingCode}${data.phone}`;
-    console.log('Form Submitted', { ...data, fullPhoneNumber });
+  const onSubmit = async (data: FormValues) => {
+    if (rememberMe) {
+      saveTempLogin(data);
+    }
+
+    const res = await ApiService(
+      ApiList.LOGIN,
+      Constants.POST,
+      {
+        mobile: data.phone,
+        country_code: callingCode,
+        role: Constants.ROLE.CUSTOMER,
+        password: data.password,
+      },
+    );
+
+    if (!res?.ack) {
+      showToast({ title: res?.msg || res?.message, icon: 'error' });
+    }
+
+    if (res?.ack) {
+      showToast({ title: res?.msg || res?.message, icon: 'success' });
+      saveUserToken(res?.token);
+      navigation.navigate('HomeScreen');
+    }
   };
+
+  React.useEffect(() => {
+    const getLoginDetails = async () => {
+      const data: FormValues | null = await getTempLogin();
+      if (data) {
+        setLoginDetails(data);
+        reset(data);
+        setRememberMe(true);
+      }
+    };
+    if (!Object.keys(loginDetails).length) {
+      getLoginDetails();
+    }
+  }, [getTempLogin, loginDetails, reset]);
 
   return (
     <View style={styles.container}>

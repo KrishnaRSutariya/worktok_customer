@@ -7,6 +7,10 @@ import { Button } from 'react-native-paper';
 import { OtpInput } from 'react-native-otp-entry';
 import ForgotPasswordMain from '../components/login_registration/ForgotPassword';
 import ForgotPasswordHeader from '../components/home/ForgotPasswordHeader';
+import ApiService from '../apis/ApiService';
+import { ApiList } from '../apis/ApiList';
+import { Constants } from '../constants/Constants';
+import { useToast } from '../components/common/Toaster';
 
 const { height } = Dimensions.get('window');
 
@@ -22,12 +26,35 @@ const ForgotPassword = ({ navigation }: { navigation: ForgotPasswordProps }) => 
     const [formData, setFormData] = React.useState<RegistrationFormProps | null>(null);
     const [otp, setOtp] = React.useState<string | null>(null);
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+    const [resendTime, setResendTime] = React.useState(180);
+    const [isResendDisabled, setIsResendDisabled] = React.useState(false);
+
+    const { showToast } = useToast();
 
     React.useEffect(() => {
+        const sendOtp = async () => {
+            const res = await ApiService(
+                ApiList.FORGET_PASSWORD_OTP,
+                Constants.POST,
+                {
+                    mobile: formData?.phone,
+                    country_code: formData?.countryCode,
+                    role: Constants.ROLE.CUSTOMER,
+                },
+            );
+
+            if (!res?.ack) {
+                showToast({ title: res?.msg || res?.message, icon: 'error' });
+            }
+            if (res?.ack) {
+                setIsResendDisabled(true);
+                refRBSheet.current.open();
+            }
+        };
         if (formData?.countryCode && formData?.phone) {
-            refRBSheet.current.open();
+            sendOtp();
         }
-    }, [formData]);
+    }, [formData, showToast]);
 
     React.useEffect(() => {
         if (otp?.length && otp?.length !== 6 && errorMessage) {
@@ -35,20 +62,68 @@ const ForgotPassword = ({ navigation }: { navigation: ForgotPasswordProps }) => 
         }
     }, [otp, errorMessage]);
 
-    const handleOTPSubmit = () => {
-        const match = true;
-        if (match) {
-            refRBSheet.current.close();
-            navigation.navigate('CreateNewPassword');
+    const handleOTPSubmit = async () => {
+        const res = await ApiService(
+            ApiList.FORGET_PASSWORD_VERIFY,
+            Constants.POST,
+            {
+                mobile: formData?.phone,
+                country_code: formData?.countryCode,
+                role: Constants.ROLE.CUSTOMER,
+                otp,
+            },
+        );
+
+        if (!res?.ack) {
+            showToast({ title: res?.msg || res?.message, icon: 'error' });
+            setErrorMessage('Please ensure you entered the correct OTP code.');
         }
-        setErrorMessage('Please ensure you entered the correct OTP code.');
+        if (res?.ack) {
+            refRBSheet.current.close();
+            navigation.navigate('CreateNewPassword', { user_id: res?.user_id, reset_token: res?.reset_token?.accessToken });
+        }
+    };
+
+    React.useEffect(() => {
+        let timer: any;
+        if (isResendDisabled) {
+            timer = setInterval(() => {
+                setResendTime((prevTime) => {
+                    if (prevTime <= 1) {
+                        clearInterval(timer);
+                        setIsResendDisabled(false);
+                        return 0;
+                    }
+                    return prevTime - 1;
+                });
+            }, 1000);
+        }
+
+        return () => clearInterval(timer);
+    }, [isResendDisabled]);
+
+    const handleResendCode = async () => {
+        if (!isResendDisabled) {
+            setIsResendDisabled(true);
+            setResendTime(180);
+            const res = await ApiService(
+                ApiList.FORGET_PASSWORD_OTP,
+                Constants.POST,
+                {
+                    mobile: formData?.phone,
+                    country_code: formData?.countryCode,
+                    role: Constants.ROLE.CUSTOMER,
+                },
+            );
+            showToast({ title: res?.msg || res?.message, icon: !res?.ack ? 'error' : 'success' });
+        }
     };
 
     return (
         <View>
             <ForgotPasswordHeader image={require('../assets/ForgotPassword.png')} />
             <ScrollView style={styles.container}>
-                <ForgotPasswordMain setFormData={setFormData} />
+                <ForgotPasswordMain navigation={navigation} setFormData={setFormData} />
             </ScrollView>
 
             <RBSheet
@@ -84,7 +159,7 @@ const ForgotPassword = ({ navigation }: { navigation: ForgotPasswordProps }) => 
                                     secureTextEntry={false}
                                     focusStickBlinkingDuration={500}
                                     onTextChange={(text) => setOtp(text)}
-                                    onFilled={handleOTPSubmit}
+                                    // onFilled={handleOTPSubmit}
                                     theme={{
                                         containerStyle: styles.otpContainer,
                                         pinCodeContainerStyle: styles.pinCodeContainer,
@@ -105,8 +180,8 @@ const ForgotPassword = ({ navigation }: { navigation: ForgotPasswordProps }) => 
                                 <Button mode="contained" style={[styles.button, styles.innerButton, styles.innerButtonRight]} onPress={otp?.length === 6 ? handleOTPSubmit : () => setErrorMessage('Please enter a valid OTP code.')}>
                                     <Text style={[styles.buttonText]}>Continue</Text>
                                 </Button>
-                                <Button mode="contained" style={[styles.button, styles.innerButton, styles.innerButtonLeft]} onPress={() => { }}>
-                                    <Text style={[styles.buttonText, styles.buttonOutlineText]}>Resend code</Text>
+                                <Button mode="contained" style={[styles.button, styles.innerButton, styles.innerButtonLeft, isResendDisabled && styles.isResendDisabled]} onPress={handleResendCode}>
+                                    <Text style={[styles.buttonText, styles.buttonOutlineText]}>{isResendDisabled ? `Resend again in (${resendTime} sec)` : 'Resend Code'}</Text>
                                 </Button>
                             </View>
                         </View>
@@ -205,5 +280,8 @@ const styles = StyleSheet.create({
     },
     buttonOutlineText: {
         color: '#1d2939',
+    },
+    isResendDisabled: {
+        opacity: 0.7,
     },
 });

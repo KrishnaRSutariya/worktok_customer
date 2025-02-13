@@ -14,6 +14,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		7699B88040F8A987B510C191 /* libPods-worktok_customer-worktok_customerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-worktok_customer-worktok_customerTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		875E1FDE8D904905BA7F9A8F /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99EA372F3D645569D949540 /* noop-file.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +46,9 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = worktok_customer/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-worktok_customer-worktok_customerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-worktok_customer-worktok_customerTests.release.xcconfig"; path = "Target Support Files/Pods-worktok_customer-worktok_customerTests/Pods-worktok_customer-worktok_customerTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		E99EA372F3D645569D949540 /* noop-file.swift */ = {isa = PBXFileReference; name = "noop-file.swift"; path = "worktok_customer/noop-file.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
+		CAD5DA02479E45B1A2C3C4C2 /* worktok_customer-Bridging-Header.h */ = {isa = PBXFileReference; name = "worktok_customer-Bridging-Header.h"; path = "worktok_customer/worktok_customer-Bridging-Header.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		4BFA1EDF0F714468B84A8D9C /* SplashScreen.storyboard */ = {isa = PBXFileReference; name = "SplashScreen.storyboard"; path = "worktok_customer/SplashScreen.storyboard"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +98,9 @@
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
+				E99EA372F3D645569D949540 /* noop-file.swift */,
+				CAD5DA02479E45B1A2C3C4C2 /* worktok_customer-Bridging-Header.h */,
+				4BFA1EDF0F714468B84A8D9C /* SplashScreen.storyboard */,
 			);
 			name = worktok_customer;
 			sourceTree = "<group>";
@@ -245,6 +252,8 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				5CFEEC24435D4184BB3150DC /* worktok_customer-Bridging-Header.h in Resources */,
+				BF1C1867A47C402997AFC737 /* SplashScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -396,6 +405,7 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				875E1FDE8D904905BA7F9A8F /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -434,6 +444,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/worktok_customer.app/worktok_customer";
+				TARGETED_DEVICE_FAMILY = "1";
+				SWIFT_OBJC_BRIDGING_HEADER = worktok_customer/worktok_customer-Bridging-Header.h;
 			};
 			name = Debug;
 		};
@@ -458,6 +470,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/worktok_customer.app/worktok_customer";
+				TARGETED_DEVICE_FAMILY = "1";
+				SWIFT_OBJC_BRIDGING_HEADER = worktok_customer/worktok_customer-Bridging-Header.h;
 			};
 			name = Release;
 		};
@@ -481,11 +495,14 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = worktok_customer;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.hmrtechnology.worktokcustomer";
+				PRODUCT_NAME = "WorktokCustomer";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
+				TARGETED_DEVICE_FAMILY = "1";
+				SWIFT_OBJC_BRIDGING_HEADER = worktok_customer/worktok_customer-Bridging-Header.h;
+				CODE_SIGN_ENTITLEMENTS = worktok_customer/worktok_customer.entitlements;
 			};
 			name = Debug;
 		};
@@ -508,10 +525,13 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = worktok_customer;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.hmrtechnology.worktokcustomer";
+				PRODUCT_NAME = "WorktokCustomer";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
+				TARGETED_DEVICE_FAMILY = "1";
+				SWIFT_OBJC_BRIDGING_HEADER = worktok_customer/worktok_customer-Bridging-Header.h;
+				CODE_SIGN_ENTITLEMENTS = worktok_customer/worktok_customer.entitlements;
 			};
 			name = Release;
 		};

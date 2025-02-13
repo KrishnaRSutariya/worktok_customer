@@ -87,7 +87,7 @@ export const ToastContainer = ({ children }: { children: React.ReactNode }) => {
                 <TouchableOpacity
                     style={styles.toastContent}
                     onLayout={(e) => setToastHeight(e.nativeEvent.layout.height)}
-                    // onPress={hideToast}
+                    onPress={hideToast}
                 >
                     <Animated.View
                         style={[
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         backgroundColor: '#1d2939',
         borderBottomColor: 'transparent',
-        borderBottomWidth: 10,
+        borderBottomWidth: 7,
         overflow: 'hidden',
     },
     toastContent: {
