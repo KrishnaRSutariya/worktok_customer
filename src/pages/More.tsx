@@ -10,7 +10,7 @@ type MoreScreenProps = NativeStackNavigationProp<RootStackParamList, 'More'>;
 const More = ({ navigation }: { navigation: MoreScreenProps }) => {
     return (
         <View>
-            <TopProfile navigation={navigation} />
+            <TopProfile />
             <BottomNavigation navigation={navigation} />
         </View>
     );

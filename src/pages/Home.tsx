@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import ApiService from '../apis/ApiService';
 import { ApiList } from '../apis/ApiList';
 import { Constants } from '../constants/Constants';
@@ -8,6 +9,7 @@ import { globalStyles } from '../styles/global';
 import { Button } from 'react-native-paper';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../Layout';
+import { useAsyncStorage } from '../hooks/useAsyncStorage';
 
 type HomeScreenProps = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
@@ -24,6 +26,8 @@ const CategoryItem = ({ item }: any) => {
 
 const Home = ({ navigation }: { navigation: HomeScreenProps }) => {
     const [category, setCategory] = React.useState([]);
+    const { getStoredValue: getUserToken } = useAsyncStorage('userToken');
+    const { saveValue: saveUserDetails } = useAsyncStorage('userDetails');
 
     React.useEffect(() => {
         const fetchCategory = async () => {
@@ -32,7 +36,17 @@ const Home = ({ navigation }: { navigation: HomeScreenProps }) => {
                 setCategory(response?.categories);
             }
         };
+        const getUser = async () => {
+            const token = await getUserToken().then((res) => res?.accessToken ?? null).catch(() => null);
+            if (token) {
+                const res = await ApiService(ApiList.GET_PROFILE, Constants.GET, {}, navigation);
+                if (res?.ack) {
+                    saveUserDetails(res?.data);
+                }
+            }
+        };
         fetchCategory();
+        getUser();
     }, []);
 
     return (

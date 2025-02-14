@@ -4,16 +4,10 @@ import React from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import { Button } from 'react-native-paper';
 import { globalStyles } from '../../styles/global';
-import ApiService from '../../apis/ApiService';
-import { ApiList } from '../../apis/ApiList';
-import { Constants } from '../../constants/Constants';
-import { useToast } from '../common/Toaster';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../Layout';
+import { useAsyncStorage } from '../../hooks/useAsyncStorage';
 
-type MoreScreenProps = NativeStackNavigationProp<RootStackParamList, 'More'>;
 
-const TopProfile = ({ navigation }: { navigation: MoreScreenProps }) => {
+const TopProfile = () => {
     const [user, setUser] = React.useState<{
         full_name: string;
         country_code: string;
@@ -23,20 +17,14 @@ const TopProfile = ({ navigation }: { navigation: MoreScreenProps }) => {
         country_code: '',
         mobile: '',
     });
-    const { showToast } = useToast();
+    const { getStoredValue: getUserDetails } = useAsyncStorage('userDetails');
 
     React.useEffect(() => {
         const getUser = async () => {
-            const res = await ApiService(ApiList.GET_PROFILE, Constants.GET, {}, navigation);
-            if (!res?.ack) {
-                showToast({ title: res?.msg || res?.message, icon: 'error' });
-            }
-            if (res?.ack) {
-                setUser(res?.data);
-            }
+            setUser(await getUserDetails());
         };
         getUser();
-    }, [navigation, showToast]);
+    }, [getUserDetails]);
 
     return (
         <View>

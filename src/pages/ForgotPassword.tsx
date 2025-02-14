@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
 import React, { useRef } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -54,7 +55,7 @@ const ForgotPassword = ({ navigation }: { navigation: ForgotPasswordProps }) => 
         if (formData?.countryCode && formData?.phone) {
             sendOtp();
         }
-    }, [formData, showToast]);
+    }, [formData]);
 
     React.useEffect(() => {
         if (otp?.length && otp?.length !== 6 && errorMessage) {

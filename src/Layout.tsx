@@ -22,6 +22,7 @@ import Microphone from './pages/permissions/Microphone';
 import AccountCreation from './pages/AccountCreation';
 import ForgotPassword from './pages/ForgotPassword';
 import CreateNewPassword from './pages/CreateNewPassword';
+import ChannelMessage from './pages/ChannelMessage';
 
 export type RootStackParamList = {
     Landing: undefined;
@@ -35,6 +36,7 @@ export type RootStackParamList = {
     LocationPermission: { route: 'Login' | 'Registration' };
     MicrophonePermission: { route: 'Login' | 'Registration' };
     Message: undefined;
+    ChannelMessage: { channelId: string, channelType: string };
     MyJobs: undefined;
     More: undefined;
     HomeScreen: undefined;
@@ -80,6 +82,7 @@ const BottomNavigator = () => {
             />
             <Tab.Screen name="Message"
                 options={{
+                    header: PageHeader,
                     tabBarIcon: ({ focused }) => getIcons('message', focused),
                     tabBarBadge: 3,
                 }}
@@ -155,6 +158,11 @@ export const Layout = () => {
                 <Stack.Screen
                     name="HomeScreen"
                     component={BottomNavigator}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="ChannelMessage"
+                    component={ChannelMessage}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
