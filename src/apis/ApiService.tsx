@@ -6,8 +6,9 @@ const ApiService = async (
     url: string,
     type: string | 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH',
     data: any = {},
+    navigation: any = null,
     formData = false,
-    baseUrl = Environments.BACKEND_URL
+    baseUrl = Environments.BACKEND_URL,
 ) => {
     const { getStoredValue: getUserToken } = useAsyncStorage('userToken');
     const token = await getUserToken().then((res) => res?.accessToken ?? null).catch(() => null);
@@ -30,6 +31,10 @@ const ApiService = async (
     const responseJson = await response.json();
 
     console.log('\nOutput: ', JSON.stringify(responseJson), '\n\n');
+
+    if (response.status === 401) {
+        navigation?.navigate('Landing');
+    }
 
     return responseJson;
 };

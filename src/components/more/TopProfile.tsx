@@ -4,8 +4,40 @@ import React from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import { Button } from 'react-native-paper';
 import { globalStyles } from '../../styles/global';
+import ApiService from '../../apis/ApiService';
+import { ApiList } from '../../apis/ApiList';
+import { Constants } from '../../constants/Constants';
+import { useToast } from '../common/Toaster';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../Layout';
 
-const TopProfile = () => {
+type MoreScreenProps = NativeStackNavigationProp<RootStackParamList, 'More'>;
+
+const TopProfile = ({ navigation }: { navigation: MoreScreenProps }) => {
+    const [user, setUser] = React.useState<{
+        full_name: string;
+        country_code: string;
+        mobile: string;
+    }>({
+        full_name: '',
+        country_code: '',
+        mobile: '',
+    });
+    const { showToast } = useToast();
+
+    React.useEffect(() => {
+        const getUser = async () => {
+            const res = await ApiService(ApiList.GET_PROFILE, Constants.GET, {}, navigation);
+            if (!res?.ack) {
+                showToast({ title: res?.msg || res?.message, icon: 'error' });
+            }
+            if (res?.ack) {
+                setUser(res?.data);
+            }
+        };
+        getUser();
+    }, [navigation, showToast]);
+
     return (
         <View>
             <View style={styles.topProfile}>
@@ -13,10 +45,10 @@ const TopProfile = () => {
                     <Image source={require('../../assets/TempUser.png')} style={styles.image} />
                     <Image source={require('../../assets/Verify.png')} style={styles.verifyImage} />
                 </View>
-                <Text style={styles.textUserName}>Ariful Islam Sany</Text>
+                <Text style={styles.textUserName}>{user?.full_name}</Text>
                 <View style={styles.mobile}>
                     <FontAwesome name={'phone-volume'} size={20} solid color={'white'} />
-                    <Text style={styles.textMobile}>+964 298364038</Text>
+                    <Text style={styles.textMobile}>{user?.country_code} {user?.mobile}</Text>
                 </View>
                 <View style={styles.mobile}>
                     <Button mode="contained" style={[styles.button]}>

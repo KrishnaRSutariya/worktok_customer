@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import React from 'react';
 import TopProfile from '../components/more/TopProfile';
 import BottomNavigation from '../components/more/BottomNavigation';
@@ -10,14 +10,10 @@ type MoreScreenProps = NativeStackNavigationProp<RootStackParamList, 'More'>;
 const More = ({ navigation }: { navigation: MoreScreenProps }) => {
     return (
         <View>
-            <TopProfile />
+            <TopProfile navigation={navigation} />
             <BottomNavigation navigation={navigation} />
         </View>
     );
 };
 
 export default More;
-
-const styles = StyleSheet.create({
-
-});
