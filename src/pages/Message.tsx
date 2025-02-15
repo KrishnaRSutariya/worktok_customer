@@ -2,11 +2,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Dimensions, FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React from 'react';
+import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import { useAsyncStorage } from '../hooks/useAsyncStorage';
 import { ActivityIndicator, Searchbar, Text } from 'react-native-paper';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../Layout';
 import { useChat } from '../components/common/StreamChat';
+import { globalStyles } from '../styles/global';
 
 const { height } = Dimensions.get('window');
 
@@ -20,6 +22,20 @@ const getTime = (time: string) => {
 
 const defaultImage = 'https://cdn1.iconfinder.com/data/icons/user-interface-263/24/Account-512.png';
 
+const MessageHeader = ({ navigation }: { navigation: MessageProps }) => {
+    return (
+        <View style={styles.headerContainer}>
+            <TouchableOpacity style={[styles.leftButton]} onPress={() => { }}>
+                <FontAwesome name="headphones" size={20} solid color="white" />
+            </TouchableOpacity>
+            <Text style={[globalStyles.textBold, styles.headerText]}>Messages</Text>
+            <TouchableOpacity style={styles.backButton} onPress={navigation.goBack}>
+                <FontAwesome name="arrow-right" size={20} solid color="white" />
+            </TouchableOpacity>
+        </View>
+    );
+};
+
 type MessageProps = NativeStackNavigationProp<RootStackParamList, 'Message'>;
 
 const Message = ({ navigation }: { navigation: MessageProps }) => {
@@ -31,6 +47,7 @@ const Message = ({ navigation }: { navigation: MessageProps }) => {
     const [loading, setLoading] = React.useState(true);
     const [search, setSearch] = React.useState<string>('');
     const [userPresence, setUserPresence] = React.useState<Record<string, boolean>>({});
+    const [refreshing, setRefreshing] = React.useState(false);
 
     const getUser = async () => {
         const user = await getUserDetails();
@@ -63,14 +80,8 @@ const Message = ({ navigation }: { navigation: MessageProps }) => {
         }
     };
 
-    const handleNewMessage = (event: any) => {
-        setChannels((prevChannels) => {
-            return prevChannels.map((channel) =>
-                channel.id === event.channel_id
-                    ? { ...channel, state: { ...channel.state, messages: [...channel.state.messages, event.message] } }
-                    : channel
-            );
-        });
+    const handleNewMessage = () => {
+        refreshChannels();
     };
 
     const handleChannelUpdated = (event: any) => {
@@ -88,6 +99,16 @@ const Message = ({ navigation }: { navigation: MessageProps }) => {
         }));
     };
 
+    const handleMessageRead = () => {
+        refreshChannels();
+    };
+
+    const refreshChannels = async () => {
+        setRefreshing(true);
+        await getUser(); // Fetch channels again
+        setRefreshing(false);
+    };
+
     React.useEffect(() => {
         if (isConnected) {
             getUser();
@@ -97,24 +118,30 @@ const Message = ({ navigation }: { navigation: MessageProps }) => {
         client.on('message.new', handleNewMessage);
         client.on('channel.updated', handleChannelUpdated);
         client.on('user.presence.changed', handleUserPresence);
+        client.on('message.read', handleMessageRead);
 
         return () => {
             client.off('message.new', handleNewMessage);
             client.off('channel.updated', handleChannelUpdated);
             client.off('user.presence.changed', handleUserPresence);
+            client.off('message.read', handleMessageRead);
         };
     }, []);
 
     if (loading) {
         return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#4caf50" />
+            <View>
+                <MessageHeader navigation={navigation} />
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="#4caf50" />
+                </View>
             </View>
         );
     }
 
     return (
         <View style={[styles.container]}>
+            <MessageHeader navigation={navigation} />
             <View style={[styles.searchBarContainer]}>
                 <Searchbar
                     placeholder="Search chat, people and more..."
@@ -134,15 +161,22 @@ const Message = ({ navigation }: { navigation: MessageProps }) => {
                 </View>
             ) : (
                 <FlatList
-                    data={channels}
+                    data={channels.filter(channel => channel.data.name.toLowerCase().includes(search.trim().toLowerCase()))}
                     keyExtractor={(item) => item.id}
+                    showsVerticalScrollIndicator={false}
+                    refreshing={refreshing}
+                    onRefresh={refreshChannels}
                     renderItem={({ item }) => {
                         const members = Object.values(item?.state?.members);
                         const otherMember: any = members.find((m: any) => m.user?.id !== client.userID);
                         const userImage = otherMember?.user?.image || defaultImage;
                         const isOnline = userPresence[otherMember?.user?.id] ?? false;
                         return (
-                            <TouchableOpacity onPress={() => { navigation.navigate('ChannelMessage', { channelId: item?.id, channelType: item?.data?.type }); }} style={styles.channelItem}>
+                            <TouchableOpacity onPress={async () => {
+                                const channel = client.channel(item.type, item.id);
+                                await channel.markRead();
+                                navigation.navigate('ChannelMessage', { channelId: item?.id, channelType: item?.data?.type });
+                            }} style={styles.channelItem}>
                                 <View style={styles.profileContainer}>
                                     <Image source={{ uri: userImage }} style={styles.channelImage} />
                                     <View style={[styles.onlineIndicator, { backgroundColor: isOnline ? '#34c759' : '#aaa' }]} />
@@ -151,7 +185,7 @@ const Message = ({ navigation }: { navigation: MessageProps }) => {
                                     <View style={styles.channelNameContainer}>
                                         <Text style={styles.channelName} numberOfLines={1}>{item.data.name}</Text>
                                         <Text style={styles.lastMessage} numberOfLines={1}>
-                                            {item.state.messages.length > 0 ? item.state.messages[item.state.messages.length - 1].text : 'No messages yet'}
+                                            {item?.state?.messages?.length > 0 ? item.state.messages[item.state.messages.length - 1].text : 'No messages yet'}
                                         </Text>
                                     </View>
                                     <View style={styles.lastMessageContainer}>
@@ -178,9 +212,32 @@ const styles = StyleSheet.create({
         height: height - 175,
         justifyContent: 'center',
     },
+    headerContainer: {
+        height: 80,
+        paddingHorizontal: 15,
+        paddingBottom: 15,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-end',
+        objectFit: 'contain',
+        backgroundColor: '#4caf50',
+    },
+    leftButton: {
+        padding: 10,
+    },
+    headerText: {
+        fontSize: 18,
+        padding: 10,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        color: '#fff',
+    },
+    backButton: {
+        padding: 10,
+    },
     container: {
         width: '100%',
-        height: height - 175,
+        height: height - 95,
     },
     searchBarContainer: {
         padding: 10,

@@ -41,7 +41,7 @@ const ChannelMessage: React.FC<CreateChannelMessageProps> = ({ route, navigation
 
                 if (userChannel) {
                     setChannel(userChannel);
-                    setMessages(userChannel.state.messages || []);
+                    setMessages(userChannel?.state?.messages || []);
                     const foundMember: any = Object.values(userChannel?.state?.members).find((m: any) => m.user?.id !== client.userID);
                     setMember(foundMember);
 
@@ -55,25 +55,7 @@ const ChannelMessage: React.FC<CreateChannelMessageProps> = ({ route, navigation
             }
         };
 
-        if (channel) {
-            channel.on((event: any) => {
-                if (event.type === 'message.new') {
-                    setChannel({ ...channel, state: { ...channel.state, messages: [...channel.state.messages, event.message] } });
-                    setMessages((prevMessages) => [...prevMessages, event.message]);
-                }
-                if (event.type === 'user.presence.changed') {
-                    if (event.user.id === member?.user?.id) {
-                        setMember({ ...member, user: { ...member.user, online: event.user.online } });
-
-                        if (!event.user.online && event.user.last_active) {
-                            setLastSeen(moment(event.user.last_active).fromNow());
-                        }
-                    }
-                }
-            });
-        }
-
-        if (isConnected) {
+        if (isConnected && client) {
             fetchChannel();
         }
         return () => {
@@ -82,6 +64,30 @@ const ChannelMessage: React.FC<CreateChannelMessageProps> = ({ route, navigation
             }
         };
     }, []);
+
+    useEffect(() => {
+        if (!channel) {
+            return;
+        }
+
+        const handleEvent = (event: any) => {
+            if (event.type === 'message.new') {
+                setMessages((prevMessages) => [...prevMessages, event.message]);
+            }
+            if (event.type === 'user.presence.changed' && member?.user?.id === event.user.id) {
+                setMember((prevMember: any) => ({ ...prevMember, user: { ...prevMember.user, online: event.user.online } }));
+                if (!event.user.online && event.user.last_active) {
+                    setLastSeen(moment(event.user.last_active).fromNow());
+                }
+            }
+        };
+
+        channel.on(handleEvent);
+
+        return () => {
+            channel.off(handleEvent);
+        };
+    }, [channel, member]);
 
     useEffect(() => {
         scrollToBottom();

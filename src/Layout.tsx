@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
 
 import { NavigationContainer } from '@react-navigation/native';
@@ -23,6 +24,8 @@ import AccountCreation from './pages/AccountCreation';
 import ForgotPassword from './pages/ForgotPassword';
 import CreateNewPassword from './pages/CreateNewPassword';
 import ChannelMessage from './pages/ChannelMessage';
+import { useChat } from './components/common/StreamChat';
+import { useAsyncStorage } from './hooks/useAsyncStorage';
 
 export type RootStackParamList = {
     Landing: undefined;
@@ -51,6 +54,39 @@ const getIcons = (iconName: string, focused: boolean) => {
 };
 
 const BottomNavigator = () => {
+    const { client, isConnected } = useChat();
+    const { getStoredValue: getUserDetails } = useAsyncStorage('userDetails');
+    const [unreadCount, setUnreadCount] = React.useState(0);
+
+    // Simulate unread count
+    React.useEffect(() => {
+        const fetchUnreadCount = async () => {
+            const user = await getUserDetails();
+            if (!user) {
+                return;
+            }
+
+            const userChannels: Array<any> = await client.queryChannels({ members: { $in: [`${user?.id}`] } });
+            const totalUnread = userChannels.reduce((sum: number, channel: any) => sum + channel.countUnread(), 0);
+            setUnreadCount(totalUnread);
+        };
+
+        if (isConnected) {
+            fetchUnreadCount();
+
+            // Real-time event listeners
+            client.on('message.new', fetchUnreadCount);
+            client.on('message.read', fetchUnreadCount);
+        }
+
+        return () => {
+            if (isConnected) {
+                client.off('message.new', fetchUnreadCount);
+                client.off('message.read', fetchUnreadCount);
+            }
+        };
+    }, [client, isConnected]);
+
     return (
         <Tab.Navigator
             screenOptions={{
@@ -82,9 +118,9 @@ const BottomNavigator = () => {
             />
             <Tab.Screen name="Message"
                 options={{
-                    header: PageHeader,
+                    headerShown: false,
                     tabBarIcon: ({ focused }) => getIcons('message', focused),
-                    tabBarBadge: 3,
+                    ...(unreadCount > 0 && { tabBarBadge: unreadCount }),
                 }}
                 component={Message}
             />
